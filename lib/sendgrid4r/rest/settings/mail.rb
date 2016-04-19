@@ -73,6 +73,13 @@ module SendGrid4r
           PlainContent.new(resp['enabled'])
         end
 
+        SpamCheck = Struct.new(:enabled, :url, :max_score)
+
+        def self.create_spam_check(resp)
+          return resp if resp.nil?
+          SpamCheck.new(resp['enabled'], resp['url'], resp['max_score'])
+        end
+
         def self.url(name = nil)
           url = "#{BASE_URL}/mail_settings"
           url = "#{url}/#{name}" unless name.nil?
@@ -182,6 +189,18 @@ module SendGrid4r
           endpoint = SendGrid4r::REST::Settings::Mail.url('plain_content')
           resp = patch(@auth, endpoint, params.to_h, &block)
           SendGrid4r::REST::Settings::Mail.create_plain_content(resp)
+        end
+
+        def get_settings_spam_check(&block)
+          endpoint = SendGrid4r::REST::Settings::Mail.url("spam_check")
+          resp = get(@auth, endpoint, &block)
+          SendGrid4r::REST::Settings::Mail.create_spam_check(resp)
+        end
+
+        def patch_settings_spam_check(params:, &block)
+          endpoint = SendGrid4r::REST::Settings::Mail.url("spam_check")
+          resp = patch(@auth, endpoint, params.to_h, &block)
+          SendGrid4r::REST::Settings::Mail.create_spam_check(resp)
         end
       end
     end
