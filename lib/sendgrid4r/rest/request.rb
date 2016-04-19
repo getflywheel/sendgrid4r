@@ -38,10 +38,10 @@ module SendGrid4r
         return nil if block_given?
         return JSON.parse(body) unless body.nil? || body.length < 2
         body
-      rescue RestClient::TooManyRequests => e
-        duration = e.response.headers[:x_ratelimit_remaining].to_i
-        sleep duration if duration > 0
-        retry
+      # rescue RestClient::TooManyRequests => e
+        # duration = e.response.headers[:x_ratelimit_remaining].to_i
+        # sleep duration if duration > 0
+        # retry
       end
 
       def create_args(method, auth, endpoint, params, payload)
