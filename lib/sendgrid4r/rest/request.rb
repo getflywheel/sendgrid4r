@@ -75,6 +75,9 @@ module SendGrid4r
               "#{k}=#{CGI.escape(process_array_params(v))}"
             end
           end.join('&')
+          puts "*"*100
+          puts query_string
+          puts "*"*100
           endpoint + "?#{query_string}"
         end
       end
