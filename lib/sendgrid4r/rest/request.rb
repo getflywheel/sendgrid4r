@@ -46,7 +46,7 @@ module SendGrid4r::REST
     def create_args(method, auth, endpoint, params, payload)
       args = {}
       args[:method] = method
-      args[:url] = process_url_params(endpoint, params)
+        args[:url] = process_url_params(method, endpoint, params)
       headers = {}
       headers[:content_type] = :json
       # Added for Campaign API
@@ -63,12 +63,16 @@ module SendGrid4r::REST
       args
     end
 
-    def process_url_params(endpoint, params)
+      def process_url_params(method, endpoint, params)
       if params.nil? || params.empty?
         endpoint
       else
         query_string = params.collect do |k, v|
+            if method == :get && v.is_a?(Array)
+              v.collect{|value| "#{k}=#{CGI.escape(process_array_params(value))}" }.join("&")
+            else
           "#{k}=#{CGI.escape(process_array_params(v))}"
+            end
         end.join('&')
         endpoint + "?#{query_string}"
       end
